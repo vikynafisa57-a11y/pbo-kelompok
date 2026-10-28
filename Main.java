@@ -1,13 +1,12 @@
-
 import java.util.ArrayList;
 import java.util.Scanner;
-
 public class Main {
     private static final Scanner input = new Scanner(System.in);
     private static final ArrayList<BahanMakanan> daftarBahan =
             new ArrayList<>();
 
     private static int nomorTransaksi = 1;
+    private static int nomorBahan = 1;
 
     public static void main(String[] args) {
         int pilihan;
@@ -68,13 +67,7 @@ public class Main {
 
     private static void tambahBahan() {
         System.out.println("\n=== TAMBAH BAHAN ===");
-
-        String id = inputString("ID bahan: ");
-
-        if (cariBahan(id) != null) {
-            System.out.println("ID bahan sudah digunakan.");
-            return;
-        }
+        System.out.println("ID bahan akan dibuat otomatis.");
 
         String nama = inputString("Nama bahan: ");
 
@@ -90,7 +83,7 @@ public class Main {
             return;
         }
 
-        String satuan = inputString("Satuan (kg, liter, pcs): ");
+        String satuan = inputSatuan();
         double stok = inputDouble("Stok awal: ");
         double harga = inputDouble("Harga per satuan: Rp");
         double minimum = inputDouble("Batas stok minimum: ");
@@ -100,6 +93,7 @@ public class Main {
             return;
         }
 
+        String id = buatIdBahan();
         BahanMakanan bahan;
 
         switch (jenis) {
@@ -121,7 +115,7 @@ public class Main {
         }
 
         daftarBahan.add(bahan);
-        System.out.println("Bahan berhasil ditambahkan.");
+        System.out.println("Bahan berhasil ditambahkan dengan ID " + id + ".");
     }
 
     private static void lihatStok() {
@@ -232,6 +226,36 @@ public class Main {
         }
 
         return null;
+    }
+
+    /**
+     * Membuat ID bahan otomatis dengan format B001, B002, B003, ...
+     * Nomor akan terus bertambah setiap bahan berhasil ditambahkan.
+     */
+    private static String buatIdBahan() {
+        String id;
+
+        do {
+            id = String.format("B%03d", nomorBahan);
+            nomorBahan++;
+        } while (cariBahan(id) != null);
+
+        return id;
+    }
+
+    private static String inputSatuan() {
+        while (true) {
+            String satuan = inputString("Satuan (kg, liter, pcs): ").toLowerCase();
+
+            if (satuan.equals("kg") || satuan.equals("liter")
+                    || satuan.equals("pcs")) {
+                return satuan;
+            }
+
+            System.out.println(
+                "Satuan tidak valid. Masukkan kg, liter, atau pcs."
+            );
+        }
     }
 
     private static String inputString(String pesan) {
